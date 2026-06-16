@@ -1,6 +1,11 @@
 name: Coffee Kit Preview Deploy
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - "tmp-coffee-kit-preview/**"
+      - ".github/workflows/coffee-kit-preview-deploy.yml"
 
 jobs:
   deploy-preview:
