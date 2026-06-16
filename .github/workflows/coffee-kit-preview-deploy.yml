@@ -1,0 +1,81 @@
+name: Coffee Kit Preview Deploy
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      DB_NAME: coffee-kit-rfq-validation
+      WORKER_NAME: coffee-kit-rfq-preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Wrangler
+        run: npm install -g wrangler@3
+      - name: Build combined worker
+        run: python3 tmp-coffee-kit-preview/build_worker.py
+      - name: Create or find D1 database
+        id: d1
+        run: |
+          set -euo pipefail
+          wrangler d1 list --json > /tmp/d1-list.json
+          DB_ID=$(node -e "const fs=require('fs'); const arr=JSON.parse(fs.readFileSync('/tmp/d1-list.json','utf8')); const hit=arr.find(x=>x.name===process.env.DB_NAME); console.log(hit?hit.uuid:'')")
+          if [ -z "$DB_ID" ]; then
+            wrangler d1 create "$DB_NAME" 2>&1 | tee /tmp/d1-create.txt
+            DB_ID=$(python3 - <<'PY'
+import re
+text=open('/tmp/d1-create.txt').read()
+m=re.search(r'database_id\s*=\s*"([0-9a-f-]+)"', text) or re.search(r'([0-9a-f]{8}-[0-9a-f-]{27,})', text)
+print(m.group(1) if m else '')
+PY
+)
+          fi
+          test -n "$DB_ID"
+          echo "db_id=$DB_ID" >> "$GITHUB_OUTPUT"
+          echo "D1 database ready: $DB_NAME / $DB_ID"
+      - name: Apply D1 schema
+        run: wrangler d1 execute "$DB_NAME" --remote --file=tmp-coffee-kit-preview/schema.sql
+      - name: Generate wrangler config
+        run: |
+          cat > tmp-coffee-kit-preview/wrangler.toml <<EOF
+          name = "${WORKER_NAME}"
+          main = "worker.js"
+          compatibility_date = "2026-06-01"
+          workers_dev = true
+
+          [[d1_databases]]
+          binding = "DB"
+          database_name = "${DB_NAME}"
+          database_id = "${{ steps.d1.outputs.db_id }}"
+          EOF
+      - name: Deploy Worker
+        id: deploy
+        working-directory: tmp-coffee-kit-preview
+        run: |
+          wrangler deploy --config wrangler.toml | tee /tmp/deploy.txt
+          URL=$(grep -Eo 'https://[^ ]+\.workers\.dev' /tmp/deploy.txt | tail -1)
+          test -n "$URL"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "WORKER_URL=$URL"
+      - name: Smoke health and RFQ capture
+        run: |
+          set -euo pipefail
+          URL='${{ steps.deploy.outputs.url }}'
+          curl -fsS "$URL/health" | tee /tmp/health.json
+          curl -fsS "$URL/custom-coffee-shop-opening-kit?utm_source=github_actions&utm_medium=smoke" | grep -q 'Get my kit quote'
+          curl -fsS -X POST "$URL/api/rfq"             -H 'Content-Type: application/json'             --data '{"name":"Smoke","email":"smoke@example.com","country":"AE","shop_type":"new_cafe","quantity":"500-1000","components":["coffee_bags"],"utm_source":"github_actions","utm_medium":"smoke","utm_campaign":"preview_deploy","page_slug":"/custom-coffee-shop-opening-kit"}' | tee /tmp/rfq.json
+          grep -q '"ok":true' /tmp/rfq.json
+      - name: D1 readback
+        run: |
+          wrangler d1 execute "$DB_NAME" --remote --command "SELECT id, received_at, qualified FROM rfq_submissions ORDER BY id DESC LIMIT 3;" | tee /tmp/readback.txt
+          grep -q 'qualified' /tmp/readback.txt
+      - name: Acceptance summary
+        run: |
+          echo "PREVIEW_URL=${{ steps.deploy.outputs.url }}"
+          echo "DB_NAME=${DB_NAME}"
+          echo "WORKER_NAME=${WORKER_NAME}"

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Coffee Shop Opening Kit — Quote-first RFQ</title>
+  <meta name="description" content="Low-MOQ branded packaging bundles for independent cafes, bakeries, pop-ups, and small roasters. Quote-first prototype." />
+  <style>
+    :root {
+      --bg: #f6f0e6;
+      --paper: #fffaf1;
+      --paper-2: #f1e5d2;
+      --ink: #211810;
+      --muted: #766957;
+      --line: rgba(72, 47, 23, .16);
+      --line-strong: rgba(72, 47, 23, .28);
+      --coffee: #6f4329;
+      --coffee-2: #2d1b13;
+      --green: #2f6f55;
+      --amber: #c8822b;
+      --cream: #fff3d8;
+      --shadow: 0 24px 80px rgba(66, 42, 20, .14);
+      --radius: 22px;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+      --mono: "SFMono-Regular", "Cascadia Code", "JetBrains Mono", monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(196, 130, 43, .20), transparent 32%),
+        radial-gradient(circle at 88% 6%, rgba(47, 111, 85, .12), transparent 28%),
+        linear-gradient(135deg, #f9f2e7 0%, var(--bg) 48%, #efe0ca 100%);
+      min-height: 100vh;
+    }
+    a { color: inherit; }
+    .shell { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    .nav {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(246, 240, 230, .72);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner { height: 72px; display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight: 730; letter-spacing: -.03em; }
+    .mark { width: 34px; height:34px; border-radius: 11px; background: var(--coffee-2); color: var(--cream); display:grid; place-items:center; font-family:var(--serif); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+    .nav-links { display:flex; align-items:center; gap:20px; color:var(--muted); font-size:14px; }
+    .nav-links a { text-decoration:none; }
+    .btn {
+      appearance:none; border:0; cursor:pointer; text-decoration:none;
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      min-height: 46px; padding: 0 18px; border-radius:999px;
+      font-weight: 720; letter-spacing: -.01em;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--coffee-2); color: var(--cream); box-shadow: 0 14px 30px rgba(45,27,19,.22); }
+    .btn-secondary { background: rgba(255,250,241,.68); color: var(--coffee-2); border:1px solid var(--line); }
+    .hero { padding: 82px 0 54px; }
+    .hero-grid { display:grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items:center; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; color:var(--green); background: rgba(47,111,85,.10); border:1px solid rgba(47,111,85,.16); padding: 8px 12px; border-radius:999px; font-size:13px; font-weight:700; }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 0 5px rgba(47,111,85,.10); }
+    h1 { font-size: clamp(48px, 7vw, 84px); line-height: .91; letter-spacing: -.07em; margin: 22px 0 20px; max-width: 780px; }
+    .serif { font-family: var(--serif); font-style: italic; font-weight: 500; letter-spacing: -.055em; }
+    .lead { font-size: clamp(18px, 2.1vw, 23px); line-height:1.45; color:var(--muted); max-width: 650px; margin:0 0 28px; }
+    .hero-actions { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+    .micro { margin-top:18px; display:flex; align-items:flex-start; gap:10px; max-width: 590px; color:var(--muted); font-size:14px; line-height:1.45; }
+    .check { color: var(--green); font-weight:900; }
+    .kit-card { background: rgba(255,250,241,.78); border:1px solid var(--line); border-radius: 34px; box-shadow: var(--shadow); padding: 18px; position:relative; overflow:hidden; }
+    .kit-card:before { content:""; position:absolute; inset:-60px -80px auto auto; width:230px; height:230px; background: radial-gradient(circle, rgba(200,130,43,.20), transparent 65%); }
+    .mock-photo { min-height: 340px; border-radius: 24px; background:
+      linear-gradient(145deg, rgba(45,27,19,.9), rgba(111,67,41,.78)),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 18px);
+      color: var(--cream); padding: 24px; position:relative; overflow:hidden;
+    }
+    .bag { position:absolute; right:28px; bottom:24px; width:150px; height:210px; border-radius: 18px 18px 8px 8px; background: linear-gradient(180deg, #d8b177, #b68449); transform: rotate(5deg); box-shadow: 0 22px 50px rgba(0,0,0,.28); }
+    .bag:before { content:"ROAST\A HOUSE"; white-space:pre; position:absolute; inset:30px 18px auto; text-align:center; font-family:var(--serif); color:#2a160f; font-size:24px; line-height:.9; letter-spacing:-.05em; }
+    .cup { position:absolute; right:165px; bottom:24px; width:92px; height:135px; background: #f3eee1; border-radius: 8px 8px 36px 36px; transform: rotate(-4deg); box-shadow: 0 18px 40px rgba(0,0,0,.24); }
+    .cup:before { content:""; position:absolute; left:16px; right:16px; top:48px; height:28px; border-radius:999px; background:#6f4329; }
+    .sticker { position:absolute; left:28px; bottom:30px; padding:10px 13px; border-radius:999px; border:1px solid rgba(255,243,216,.28); color:#fff3d8; font-family:var(--mono); font-size:12px; background:rgba(255,255,255,.08); }
+    .mock-title { position:relative; z-index:1; max-width:310px; font-family:var(--serif); font-size:34px; line-height:1.02; letter-spacing:-.04em; margin:0; }
+    .mock-sub { position:relative; z-index:1; max-width:260px; color:rgba(255,243,216,.72); line-height:1.45; }
+    .proof-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:12px; }
+    .proof { padding:14px; border:1px solid var(--line); border-radius:18px; background:rgba(255,250,241,.75); }
+    .proof b { display:block; font-size:20px; letter-spacing:-.04em; }
+    .proof span { display:block; color:var(--muted); font-size:12px; margin-top:3px; }
+    section { padding: 54px 0; }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:24px; margin-bottom:22px; }
+    h2 { font-size: clamp(32px, 4vw, 52px); line-height:1; letter-spacing:-.055em; margin:0; max-width:760px; }
+    .section-note { color:var(--muted); line-height:1.5; max-width:420px; margin:0; }
+    .components { display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; }
+    .component { background: rgba(255,250,241,.74); border:1px solid var(--line); border-radius: var(--radius); padding:20px; min-height:190px; }
+    .component .num { font-family:var(--mono); color:var(--amber); font-size:12px; }
+    .component h3 { margin:34px 0 10px; font-size:22px; letter-spacing:-.035em; }
+    .component p { color:var(--muted); line-height:1.5; margin:0; }
+    .split { display:grid; grid-template-columns: .9fr 1.1fr; gap:24px; align-items:start; }
+    .steps { background: var(--coffee-2); color: var(--cream); border-radius: 30px; padding:28px; box-shadow: var(--shadow); }
+    .step { display:grid; grid-template-columns:42px 1fr; gap:14px; padding:16px 0; border-bottom:1px solid rgba(255,243,216,.13); }
+    .step:last-child { border-bottom:0; }
+    .step-index { width:34px; height:34px; border-radius:999px; display:grid; place-items:center; background:rgba(255,243,216,.10); font-family:var(--mono); color:#e9b66c; }
+    .step h3 { margin:0 0 5px; letter-spacing:-.02em; }
+    .step p { margin:0; color:rgba(255,243,216,.68); line-height:1.45; }
+    .rfq { background: rgba(255,250,241,.88); border:1px solid var(--line-strong); border-radius: 30px; padding: 24px; box-shadow: var(--shadow); }
+    .rfq h2 { font-size:34px; margin-bottom:8px; }
+    .rfq-intro { color:var(--muted); margin:0 0 18px; line-height:1.45; }
+    form { display:grid; gap:12px; }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    label { display:grid; gap:7px; font-size:13px; font-weight:700; color:var(--coffee-2); }
+    input, select, textarea { width:100%; border:1px solid var(--line); background:#fffdf8; color:var(--ink); border-radius:14px; min-height:44px; padding:10px 12px; font:inherit; outline:none; }
+    textarea { min-height:92px; resize:vertical; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(111,67,41,.55); box-shadow:0 0 0 4px rgba(111,67,41,.10); }
+    .checks { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .check-card { display:flex; gap:8px; align-items:center; border:1px solid var(--line); border-radius:14px; padding:10px; background:#fffdf8; color:var(--muted); font-size:13px; }
+    .check-card input { width:16px; min-height:16px; }
+    .success { display:none; border:1px solid rgba(47,111,85,.22); color:var(--green); background:rgba(47,111,85,.08); padding:14px; border-radius:16px; line-height:1.45; }
+    .faq { display:grid; grid-template-columns: repeat(2, 1fr); gap:14px; }
+    details { background: rgba(255,250,241,.70); border:1px solid var(--line); border-radius:18px; padding:16px 18px; }
+    summary { cursor:pointer; font-weight:750; letter-spacing:-.02em; }
+    details p { color:var(--muted); line-height:1.5; margin:12px 0 0; }
+    footer { padding:36px 0 48px; color:var(--muted); font-size:13px; }
+    .footer-line { border-top:1px solid var(--line); padding-top:18px; display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    @media (max-width: 900px) {
+      .hero-grid, .split { grid-template-columns:1fr; }
+      .components { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { display:none; }
+      .proof-row { grid-template-columns:1fr; }
+    }
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 24px, 1160px); }
+      .hero { padding-top:46px; }
+      h1 { font-size:46px; }
+      .components, .faq, .form-grid, .checks { grid-template-columns:1fr; }
+      .mock-photo { min-height:300px; }
+      .cup { right:122px; }
+      .bag { width:124px; height:178px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="shell nav-inner">
+      <div class="brand"><div class="mark">C</div><span>Cafe Kit Studio</span></div>
+      <div class="nav-links">
+        <a href="#components">Components</a>
+        <a href="#how">How it works</a>
+        <a href="#quote">RFQ</a>
+      </div>
+      <a class="btn btn-primary" href="#quote">Get my kit quote</a>
+    </div>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Quote-first prototype · no inventory commitment</div>
+          <h1>Launch your cafe with <span class="serif">branded packaging</span> — without guessing MOQ.</h1>
+          <p class="lead">Get a custom quote for coffee bags, cups, sleeves, carriers, stickers, and opening cards. Built for independent cafes, bakeries, pop-ups, and small roasters.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#quote">Get my kit quote</a>
+            <a class="btn btn-secondary" href="#components">See what can be included</a>
+          </div>
+          <div class="micro"><span class="check">✓</span><span>No instant checkout. We confirm MOQ, sample fee, material, and lead time before you order.</span></div>
+        </div>
+        <aside class="kit-card" aria-label="Coffee opening kit preview">
+          <div class="mock-photo">
+            <h2 class="mock-title">Opening-ready packaging, quoted before you commit.</h2>
+            <p class="mock-sub">Bags, cups, sleeves, carriers and print add-ons mapped into one supplier-ready request.</p>
+            <div class="cup"></div><div class="bag"></div><div class="sticker">MOQ signals from ~500 pcs</div>
+          </div>
+          <div class="proof-row">
+            <div class="proof"><b>500 pcs</b><span>public MOQ signal for bags/stickers</span></div>
+            <div class="proof"><b>3 groups</b><span>bags · takeaway · print add-ons</span></div>
+            <div class="proof"><b>RFQ only</b><span>no fixed price promises yet</span></div>
+          </div>
+        </aside>
+      </div>
+    </header>
+
+    <section id="components">
+      <div class="shell">
+        <div class="section-head">
+          <h2>One opening kit, not five confusing supplier tabs.</h2>
+          <p class="section-note">You do not need to know every packaging term before asking for a quote. Tell us what you are opening and what you want branded.</p>
+        </div>
+        <div class="components">
+          <article class="component"><div class="num">01</div><h3>Coffee bags</h3><p>250g / 500g / 1kg bags with valve, zipper, kraft or matte finishes.</p></article>
+          <article class="component"><div class="num">02</div><h3>Cups & sleeves</h3><p>8oz / 12oz / 16oz cup, sleeve, and carrier options for takeaway branding.</p></article>
+          <article class="component"><div class="num">03</div><h3>Stickers & cards</h3><p>Logo stickers, QR labels, thank-you cards, mini menus, opening inserts.</p></article>
+          <article class="component"><div class="num">04</div><h3>Design prep</h3><p>Logo placement, dieline check, print-ready file review before supplier quote.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="shell split">
+        <div>
+          <h2>Designed for the awkward stage before opening day.</h2>
+          <p class="section-note" style="margin-top:18px">You need the shop to look real, but you are not ready to buy thousands of the wrong item. This flow keeps the commitment at RFQ level until supplier facts are known.</p>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-index">1</div><div><h3>Submit your kit request</h3><p>Country, timeline, quantity tier, components and logo readiness.</p></div></div>
+          <div class="step"><div class="step-index">2</div><div><h3>We check supplier fit</h3><p>MOQ, sample, material, food-contact statement and production time.</p></div></div>
+          <div class="step"><div class="step-index">3</div><div><h3>You receive options</h3><p>Quote paths by quantity, material and lead time — before you order.</p></div></div>
+          <div class="step"><div class="step-index">4</div><div><h3>You decide</h3><p>No checkout pressure, no inventory commitment, no hidden delivery promise.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quote">
+      <div class="shell split">
+        <div class="rfq">
+          <h2>Get your kit quote</h2>
+          <p class="rfq-intro">This prototype stores the request locally for validation. In production it should send to a backend/CRM.</p>
+          <form id="rfqForm">
+            <div class="form-grid">
+              <label>Name <input required name="name" placeholder="Alex" /></label>
+              <label>Email <input required name="email" type="email" placeholder="alex@cafe.com" /></label>
+              <label>Country <input required name="country" placeholder="United States" /></label>
+              <label>Shop type <select required name="shop_type"><option value="">Choose one</option><option>Cafe</option><option>Bakery</option><option>Small roaster</option><option>Food truck / pop-up</option><option>Other</option></select></label>
+              <label>Opening / rebrand date <input required name="date" type="month" /></label>
+              <label>Quantity tier <select required name="quantity"><option value="">Choose one</option><option>100–300 pcs</option><option>500 pcs</option><option>1,000 pcs</option><option>3,000+ pcs</option><option>Not sure yet</option></select></label>
+              <label>Logo status <select required name="logo"><option value="">Choose one</option><option>Logo ready</option><option>Need file check</option><option>Need design help</option></select></label>
+              <label>Food-contact required? <select required name="food_contact"><option value="">Choose one</option><option>Yes</option><option>No</option><option>Not sure</option></select></label>
+            </div>
+            <label>Components you want</label>
+            <div class="checks">
+              <label class="check-card"><input type="checkbox" name="components" value="Coffee bags" /> Coffee bags</label>
+              <label class="check-card"><input type="checkbox" name="components" value="Cups" /> Cups</label>
+              <label class="check-card"><input type="checkbox" name="components" value="Sleeves/carriers" /> Sleeves / carriers</label>
+              <label class="check-card"><input type="checkbox" name="components" value="Stickers/cards" /> Stickers / cards</label>
+            </div>
+            <label>Notes / style references <textarea name="notes" placeholder="Example: matte kraft bags, black logo, need everything before August opening."></textarea></label>
+            <button class="btn btn-primary" type="submit">Save prototype RFQ</button>
+            <div class="success" id="successBox">Saved locally. Validation signal captured: this would become a qualified RFQ if connected to backend.</div>
+          </form>
+        </div>
+        <div>
+          <h2>Validation gate</h2>
+          <p class="section-note" style="margin-top:18px">Pass only if the page produces real procurement intent — not inspiration browsing.</p>
+          <div class="faq" style="margin-top:22px">
+            <details open><summary>PASS</summary><p>Within 7–14 days: ≥3 qualified RFQs, or ≥1 strong RFQ with logo, country, quantity ≥500 and deadline.</p></details>
+            <details><summary>WATCH</summary><p>Visitors engage but fields are incomplete, or demand concentrates only on cheap stickers/cards.</p></details>
+            <details><summary>FAIL</summary><p>No qualified RFQ, unworkable supplier quote, or food-contact certification blocks customer claims.</p></details>
+            <details><summary>DO NOT</summary><p>No fixed checkout, no delivery promise, no inventory purchase, no food-safe claim without docs.</p></details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <h2>Common questions before you ask for a quote.</h2>
+        </div>
+        <div class="faq">
+          <details><summary>What is the MOQ?</summary><p>It depends on the item. Public supplier signals show some coffee bags and stickers can start around 500 pcs, but we confirm each quote before you order.</p></details>
+          <details><summary>Can I start with one item?</summary><p>Yes. You can request only coffee bags, only sleeves, only stickers, or a full opening kit.</p></details>
+          <details><summary>Can you help with logo placement?</summary><p>Yes. If your logo is not print-ready, mark “need design help” in the form.</p></details>
+          <details><summary>Are the materials food-contact safe?</summary><p>We confirm material and supplier statements per item. Do not assume until the quote is verified.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-line">
+      <span>Cafe Kit Studio · validation prototype</span>
+      <span>Quote-first · no inventory · no fixed delivery promise</span>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('rfqForm');
+    const success = document.getElementById('successBox');
+    const RFQ_ENDPOINT = window.RFQ_ENDPOINT || '/api/rfq';
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const components = [...form.querySelectorAll('input[name="components"]:checked')].map(x => x.value);
+      const params = new URLSearchParams(window.location.search);
+      const payload = Object.fromEntries(data.entries());
+      payload.components = components;
+      payload.page_slug = window.location.pathname || '/custom-coffee-shop-opening-kit';
+      payload.source = document.referrer ? 'referral' : 'direct_or_unknown';
+      payload.utm_source = params.get('utm_source');
+      payload.utm_medium = params.get('utm_medium');
+      payload.utm_campaign = params.get('utm_campaign');
+      payload.saved_at = new Date().toISOString();
+      localStorage.setItem('coffee_kit_rfq_prototype', JSON.stringify(payload, null, 2));
+      let apiSaved = false;
+      try {
+        const response = await fetch(RFQ_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        apiSaved = response.ok;
+      } catch (error) {
+        apiSaved = false;
+      }
+      success.textContent = apiSaved
+        ? 'Saved to local preview capture. Qualified RFQ signal recorded.'
+        : 'Saved locally in this browser. Connect the preview server/API to capture submissions.';
+      success.style.display = 'block';
+      success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  </script>
+</body>
+</html>
