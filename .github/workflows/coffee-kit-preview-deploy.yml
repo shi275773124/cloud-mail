@@ -32,13 +32,7 @@ jobs:
           DB_ID=$(node -e "const fs=require('fs'); const arr=JSON.parse(fs.readFileSync('/tmp/d1-list.json','utf8')); const hit=arr.find(x=>x.name===process.env.DB_NAME); console.log(hit?hit.uuid:'')")
           if [ -z "$DB_ID" ]; then
             wrangler d1 create "$DB_NAME" 2>&1 | tee /tmp/d1-create.txt
-            DB_ID=$(python3 - <<'PY'
-import re
-text=open('/tmp/d1-create.txt').read()
-m=re.search(r'database_id\s*=\s*"([0-9a-f-]+)"', text) or re.search(r'([0-9a-f]{8}-[0-9a-f-]{27,})', text)
-print(m.group(1) if m else '')
-PY
-)
+            DB_ID=$(python3 -c "import re; text=open('/tmp/d1-create.txt').read(); m=re.search(r'database_id\\s*=\\s*\"([0-9a-f-]+)\"', text) or re.search(r'([0-9a-f]{8}-[0-9a-f-]{27,})', text); print(m.group(1) if m else '')")
           fi
           test -n "$DB_ID"
           echo "db_id=$DB_ID" >> "$GITHUB_OUTPUT"
