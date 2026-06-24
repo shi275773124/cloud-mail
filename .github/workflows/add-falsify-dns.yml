@@ -8,25 +8,31 @@ jobs:
     steps:
       - name: Add falsify A record
         env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           set -euo pipefail
           ZONE="fef53ad39445fd5448655dbb41aa825a"
           IP="95.217.163.4"
+          echo "=== verify token ==="
+          curl -sS "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" | python3 -m json.tool
+          echo "=== list zone ==="
+          curl -sS "https://api.cloudflare.com/client/v4/zones/${ZONE}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" | python3 -m json.tool
           EXISTING=$(curl -sS "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records?name=falsify.zjdeng.xyz&type=A" \
-            -H "Authorization: Bearer ${CF_TOKEN}")
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}")
           echo "$EXISTING" | python3 -m json.tool
           REC_ID=$(python3 -c "import json,sys; d=json.load(sys.stdin); r=d.get('result',[]); print(r[0]['id'] if r else '')" <<<"$EXISTING")
           if [ -n "$REC_ID" ]; then
             echo "Updating existing record ${REC_ID}"
             RESP=$(curl -sS -X PATCH "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records/${REC_ID}" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
               -H "Content-Type: application/json" \
               --data "{\"type\":\"A\",\"name\":\"falsify\",\"content\":\"${IP}\",\"ttl\":1,\"proxied\":true}")
           else
             echo "Creating new A record"
             RESP=$(curl -sS -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE}/dns_records" \
-              -H "Authorization: Bearer ${CF_TOKEN}" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
               -H "Content-Type: application/json" \
               --data "{\"type\":\"A\",\"name\":\"falsify\",\"content\":\"${IP}\",\"ttl\":1,\"proxied\":true}")
           fi
